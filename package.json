@@ -1,0 +1,18 @@
+{
+  "name": "spotify-recommended-artist-list",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "login": "node login.js"
+  },
+  "author": "Jonathan Tavares <the.entomb@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "lodash": "^4.17.21",
+    "spotify-web-api-node": "^5.0.2"
+  }
+}
