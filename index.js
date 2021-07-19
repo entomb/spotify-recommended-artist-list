@@ -14,7 +14,11 @@ require('dotenv').config();
   const getRecommendations = require('./api/recommendations')
   const _ = require('lodash')
 
-  const pause = () => new Promise(accept => setTimeout(accept, process.env.DELAY || 300))
+  const pause = (index = 0) => {
+    const interval = (1 + index) * (process.env.DELAY || 300)
+    console.log('delaying for', interval)
+    return new Promise(accept => setTimeout(accept, interval))
+  }
 
 
   const parseArtistFromTrack = require('./api/helper/getArtistsFromTrack')
@@ -34,9 +38,8 @@ require('dotenv').config();
     ..._.flatten(recentTracks.map(parseArtistFromTrack)),
     ..._.flatten(userTopTracks.map(parseArtistFromTrack)),
     ..._.flatten(userTopArtists.map(parseArtist)),
-    ..._.flatten(await Promise.all(_.flatMap(userPlaylists, async playlist => {
-      const trackList = await getPlaylistTracks(playlist.id)
-      await pause() // prevent agressive quering
+    ..._.flatten(await Promise.all(_.flatMap(userPlaylists, async (playlist, index) => {
+      const trackList = await pause(index).then(() => getPlaylistTracks(playlist.id))
 
       return _.flatten(trackList.map(parseArtistFromTrack))
     })))
@@ -47,8 +50,8 @@ require('dotenv').config();
   const recomendationsFromTopArtists = await pause().then(() => getRecommendations(userTopArtists.map(i => i.id)))
   Artists.push(..._.flatten(recomendationsFromTopArtists.map(parseArtistFromTrack)))
 
-  const bigRecomendation = await Promise.all(_.uniqBy(Artists, 'id').map(async artist => {
-    const recomendations = await pause().then(() => getRecommendations([artist.id]))
+  const bigRecomendation = await Promise.all(_.uniqBy(Artists, 'id').map(async (artist, index) => {
+    const recomendations = await pause(index).then(() => getRecommendations([artist.id]))
     return _.uniqBy(_.flatten(recomendations.map(parseArtistFromTrack)), 'id')
   }))
 
