@@ -1,3 +1,5 @@
 package-lock.json
 .env
 output.json
+artists.json
+node_modules/

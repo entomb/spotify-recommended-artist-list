@@ -14,7 +14,7 @@
  *  and visit <http://localhost:8888/login> in your Browser.
  */
 
- require('dotenv').config();
+require('dotenv').config();
 const SpotifyWebApi = require('spotify-web-api-node');
 const express = require('express');
 

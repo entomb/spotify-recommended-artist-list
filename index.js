@@ -5,18 +5,19 @@ require('dotenv').config();
 (async function () {
 
   const fs = require('fs')
-  const getUserInfo = require('./api/userInfo')
+  // const getUserInfo = require('./api/userInfo')
   const getRecentlyPlayed = require('./api/recentlyPlayed')
   const getUserTopTracks = require('./api/userTopTracks')
   const getUserPlayerlists = require('./api/userPlaylists')
   const getPlaylistTracks = require('./api/playlistTracks')
   const getUserTopArtists = require('./api/userTopArtists')
   const getRecommendations = require('./api/recommendations')
+  const getArtistInfo = require('./api/artistInfo')
   const _ = require('lodash')
 
   const pause = (index = 0) => {
     const interval = (1 + index) * (process.env.DELAY || 300)
-    console.log('delaying for', interval)
+    // console.log('delaying for', interval)
     return new Promise(accept => setTimeout(accept, interval))
   }
 
@@ -26,7 +27,7 @@ require('dotenv').config();
 
   console.log('booting!...')
 
-  const userInfo = await getUserInfo()
+  // const userInfo = await getUserInfo()
   const recentTracks = await pause().then(() => getRecentlyPlayed())
   const userTopTracks = await pause().then(() => getUserTopTracks())
   const userTopArtists = await pause().then(() => getUserTopArtists())
@@ -55,11 +56,20 @@ require('dotenv').config();
     return _.uniqBy(_.flatten(recomendations.map(parseArtistFromTrack)), 'id')
   }))
 
-  const flaatenBigList = _.flatten(bigRecomendation)
-  const countList = _.countBy(flaatenBigList, 'id')
+  const flattenBigList = await Promise.all(_.flatten(bigRecomendation).map(async (artist, index) => {
+    const moreInfo = await pause(index).then(() => getArtistInfo(artist.id))
+    return {
+      ...artist,
+      genres: moreInfo.genres,
+      followers: moreInfo.followers.total,
+      popularity: moreInfo.popularity,
+    }
+  }))
+
+  const countList = _.countBy(flattenBigList, 'id')
   const FinalList = Object.keys(countList).map(key => {
     return {
-      ...flaatenBigList.find(item => item.id === key),
+      ...flattenBigList.find(item => item.id === key),
       count: countList[key]
     }
   })
