@@ -61,7 +61,7 @@ require('dotenv').config();
     }
   })
 
-  console.log('writing a list of Artists, fount', FinalList.length)
+  console.log('writing a list of Artists, found', FinalList.length)
   fs.writeFileSync('./output.json', JSON.stringify(_.sortBy(FinalList, 'count')))
 
 })()
