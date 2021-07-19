@@ -11,6 +11,6 @@ module.exports = (playlistId) => new Promise((accept, reject) => {
     })
     .catch(err => {
       console.log('Something went wrong getPlaylistTracks:', err.message)
-      reject(err)
+      accept([])
     })
 })

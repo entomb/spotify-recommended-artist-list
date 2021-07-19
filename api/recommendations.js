@@ -11,6 +11,6 @@ module.exports = (ArtistIds) => new Promise((accept, reject) => {
     })
     .catch(err => {
       console.log('Something went wrong getRecommendations:', err.message)
-      reject(err)
+      accept([])
     })
 })

@@ -14,7 +14,7 @@ require('dotenv').config();
   const getRecommendations = require('./api/recommendations')
   const _ = require('lodash')
 
-  const pause = () => new Promise(accept => setTimeout(accept, 300))
+  const pause = () => new Promise(accept => setTimeout(accept, process.env.DELAY || 300))
 
 
   const parseArtistFromTrack = require('./api/helper/getArtistsFromTrack')
